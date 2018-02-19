@@ -77,12 +77,3 @@ class BoxerParser(BaseParser):
             id = boxer_id,
             name = boxer_name
         )
-
-
-
-
-
-
-
-
-
