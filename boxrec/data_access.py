@@ -27,5 +27,5 @@ class BoxerDao(BaseDao):
     def find_by_id(self, id):
         url = BASE_URL + BoxerDao.ENDPOINT.format(id=id)
         return self.parse(
-            self.session.get()
+            self.session.get(url)
         )
