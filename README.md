@@ -13,3 +13,6 @@ The variable result now contains statistics of the fight, and also contains refe
 
 # Why is this repository so nicely structured / extremely verbose (take your pick!)
 My goal is to also use this repository for the testing course in the masterclass. Therefore, it is structured in a way that will facilitate myself explaining about dependency injection/factory patterns etc. The consequence of this is that the code is slightly verbose...
+
+# Some words on authentication
+I've noticed that after a certain amount of requests Boxrec seems to require authentication for you to view any extra pages. Currently, this library does no facilitate this. However you can pass a `requests` Session object to the `FightServiceFactory.make_service()` method. Your service will then use this session for any communication to the Boxrec website. You should be able to authenticate in this session yourself.
