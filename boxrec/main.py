@@ -15,25 +15,21 @@ class CustomSearchQuery(object):
             'q':query,
             'start':1
         }
-        self.index = 0
-        self.search_results = []
+        self._generator = self.query_gen()
+
+
+    def query_gen(self):
         for page in range(1,100,10):
             params = self.params
             params['start']=page
             for item in requests.get(self.cs_uri,params).json()['items']:
-                self.search_results.append(item)
-
+                yield item
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        try:
-            result = self.search_results[self.index].upper()
-        except IndexError:
-            raise StopIteration
-        self.index += 1
-        return result
+        return next(self._generator)
 
 
 c = [fight for fight in CustomSearchQuery('*')]
