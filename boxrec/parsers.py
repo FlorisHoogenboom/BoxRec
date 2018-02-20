@@ -43,6 +43,7 @@ class FightParser(BaseParser):
     def parse(self, response):
         tree = self.make_dom_tree(response)
 
+        # TODO: sometimes one of the boxers is TBA, this should be handled.
         event_id, fight_id = self.get_event_and_fight_id(response.url)
         boxer_left_id, boxer_right_id = self.get_boxer_ids(tree)
 
@@ -53,6 +54,30 @@ class FightParser(BaseParser):
             boxer_right_id = boxer_right_id,
             winner = 'left'
         )
+
+
+class FightListParser(BaseParser):
+    BASE_DOM_PATH = \
+        '//div[@class="content"]//table[@class="calendarTable"]'
+
+    def get_event_and_fight_ids(self, tree):
+        links = tree.xpath(
+            FightListParser.BASE_DOM_PATH \
+                + '//td[@class="actionCell"]/div[@class="mobileActions"]/a[1]/@href'
+        )
+
+        events = map(lambda x: x.rsplit('/')[-2], links)
+        fights = map(lambda x: x.rsplit('/')[-1], links)
+
+        return events, fights
+
+    def parse(self, response):
+        tree = self.make_dom_tree(response)
+
+        event_ids, fight_ids = \
+            self.get_event_and_fight_ids(tree)
+
+        return zip(event_ids, fight_ids)
 
 
 class BoxerParser(BaseParser):
