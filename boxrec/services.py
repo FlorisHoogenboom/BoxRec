@@ -33,11 +33,12 @@ class FightService(object):
 
         return fight
 
-    def find_by_id(self, event_id, fight_id):
+    def find_by_id(self, event_id, fight_id, recursive=False):
         fight = self.fight_dao.find_by_id(event_id, fight_id)
-        fight_with_boxers = self._add_boxers_to_fight(fight)
-
-        return fight_with_boxers
+        if recursive:
+            return self._add_boxers_to_fight(fight)
+        else:
+            return fight
 
     def find_by_url(self, url):
         event_id = url.rsplit('/')[-2]

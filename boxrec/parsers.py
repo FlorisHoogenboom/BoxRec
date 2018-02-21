@@ -1,6 +1,8 @@
 import lxml.html
 from .models import Fight, Boxer
 
+class FailedToParse(Exception):
+    pass
 
 class BaseParser(object):
     def __init__(self):
@@ -35,17 +37,41 @@ class FightParser(BaseParser):
             FightParser.BASE_DOM_PATH + '[1]//a[@class="personLink"]/@href'
         )
 
-        left = boxer_links[0].rsplit('/')[-1]
-        right = boxer_links[1].rsplit('/')[-1]
+        try:
+            left = boxer_links[0].rsplit('/')[-1]
+            right = boxer_links[1].rsplit('/')[-1]
+        except IndexError:
+            raise FailedToParse("[-] Could not get boxers for fight")
 
         return left, right
+
+    def clean_rating(self,raw):
+        return int(raw.rsplit('\n')[0].replace(',',''))
+
+    def get_rating_before_fight(self, tree):
+        rating_row = tree.xpath(
+            FightParser.BASE_DOM_PATH + '[./td/b/text() = "before fight"]/td/text()'
+        )
+        try:
+            rating_left,rating_right = rating_row
+        except ValueError:
+            raise FailedToParse("[-] Missing rating for fight")
+
+
+        return self.clean_rating(rating_left), self.clean_rating(rating_right)
+
+
+    def get_fight_outcome(self,tree):
+        pass
 
     def parse(self, response):
         tree = self.make_dom_tree(response)
 
-        # TODO: sometimes one of the boxers is TBA, this should be handled.
+
         event_id, fight_id = self.get_event_and_fight_id(response.url)
         boxer_left_id, boxer_right_id = self.get_boxer_ids(tree)
+        rating_left,rating_right = self.get_rating_before_fight(tree)
+        ##result = self.get_fight_outcome(tree)
 
         return Fight(
             event_id = event_id,
@@ -70,6 +96,7 @@ class FightListParser(BaseParser):
         fights = map(lambda x: x.rsplit('/')[-1], links)
 
         return events, fights
+
 
     def parse(self, response):
         tree = self.make_dom_tree(response)
