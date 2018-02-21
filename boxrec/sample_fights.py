@@ -81,8 +81,4 @@ if __name__ == '__main__':
     with open('data/fight_uri.tsv','w') as f:
         for bout in CollectSampleBouts():
             print(bout)
-            f.write("{0}\t{1}\n".format(bout['url'],bout['weight']))
-
-
-
-    print(bout)
+            f.write("{0}\t{1}\n".format(bout['url'],bout['weight']))print(bout)
