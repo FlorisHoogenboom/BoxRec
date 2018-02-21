@@ -8,19 +8,10 @@ from .parsers import (
 
 class FightService(object):
     def __init__(
-        self, session, fight_parser,
-        fight_list_parser, boxer_parser
+        self, fight_dao, boxer_dao
     ):
-        self.fight_dao = FightDao(
-            session,
-            fight_parser,
-            fight_list_parser
-        )
-
-        self.boxer_dao = BoxerDao(
-            session,
-            boxer_parser
-        )
+        self.fight_dao = fight_dao
+        self.boxer_dao = boxer_dao
 
     def _add_boxers_to_fight(self, fight):
         fight.boxer_left = self.boxer_dao.find_by_id(
@@ -62,7 +53,17 @@ class FightServiceFactory(object):
         if session is None:
             session = requests.session()
 
+        fight_dao = FightDao(
+            session,
+            FightParser(),
+            FightListParser()
+        )
+
+        boxer_dao = BoxerDao(
+            session,
+            BoxerParser()
+        )
+
         return FightService(
-            session, FightParser(),
-            FightListParser(), BoxerParser()
+            fight_dao, boxer_dao
         )
