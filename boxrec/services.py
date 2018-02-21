@@ -39,6 +39,11 @@ class FightService(object):
 
         return fight_with_boxers
 
+    def find_by_url(self, url):
+        event_id = url.rsplit('/')[-2]
+        fight_id = url.rsplit('/')[-1]
+        return self.find_by_id(event_id, fight_id)
+
     def find_by_date(self, date):
         fights_list = self.fight_dao.find_by_date(date)
 
