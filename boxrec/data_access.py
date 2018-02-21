@@ -1,4 +1,4 @@
-from . import BASE_URL
+from .config import BASE_URL
 
 
 class BaseDao(object):

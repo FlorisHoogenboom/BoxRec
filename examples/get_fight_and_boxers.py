@@ -1,9 +1,30 @@
+import requests
 from boxrec.services import FightServiceFactory
 
-fight_service = FightServiceFactory.make_service()
+session = requests.Session()
 
-fight = fight_service.find_by_id(763615, 2220538)
+# Dummy request to trick boxrec
+session.post('http://boxrec.com')
 
-print(fight.fight_id)
-print(fight.boxer_left.name)
-print(fight.boxer_right.name)
+# Use this endpoint to login
+session.post(
+    'http://boxrec.com/en/login',
+    data={
+        '_target_path': 'http://boxrec.com/',
+        '_username': '{your username}',
+        '_password': '{your password}',
+        'login[go]': None
+    },
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+)
+
+# Make the service using the authenticated session
+service = FightServiceFactory.make_service(session)
+
+fight = service.find_by_id('763171', '2218493')
+print(fight)
+
+fights = service.find_by_date('2018-02-01')
+print(fights)
