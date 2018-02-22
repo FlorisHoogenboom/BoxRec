@@ -46,6 +46,8 @@ class Fight(object):
 
     @property
     def winning_boxer(self):
+        if self.winner == 'drawn':
+            return None
         if self.winner == 'left':
             return self.boxer_left
         else:

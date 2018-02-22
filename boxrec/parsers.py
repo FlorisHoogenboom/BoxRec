@@ -1,8 +1,10 @@
 import lxml.html
 from .models import Fight, Boxer
 
+
 class FailedToParse(Exception):
     pass
+
 
 class BaseParser(object):
     def __init__(self):
@@ -64,26 +66,44 @@ class FightParser(BaseParser):
 
         return self.clean_rating(rating_left), self.clean_rating(rating_right)
 
-    def get_fight_outcome(self, tree):
-        pass
+    def get_fight_outcome(self, tree, left_id, right_id):
+        outcome = tree.xpath(
+            FightParser.BASE_DOM_PATH + '//td[./span[@class="textWon"]]/a[./img]/@href'
+        )
+
+        try:
+            winner_id = outcome[0].rsplit('/')[-1]
+        except IndexError as e:
+            drawn = tree.xpath(
+                FightParser.BASE_DOM_PATH + '//td[./span[@class="textDrawn"]]/a[./img]/@href'
+            )
+            if len(drawn) > 0:
+                return 'drawn'
+            else:
+                raise FailedToParse('Could not determine fight outcome, did it already occur?')
+
+        if left_id == winner_id:
+            return 'left'
+        else:
+            return 'right'
+
 
     def parse(self, response):
         tree = self.make_dom_tree(response)
 
-
         event_id, fight_id = self.get_event_and_fight_id(response.url)
         boxer_left_id, boxer_right_id = self.get_boxer_ids(tree)
         rating_left, rating_right = self.get_rating_before_fight(tree)
-        # result = self.get_fight_outcome(tree)
+        result = self.get_fight_outcome(tree, boxer_left_id, boxer_right_id)
 
         return Fight(
-            event_id = event_id,
-            fight_id = fight_id,
-            boxer_left_id = boxer_left_id,
-            boxer_right_id = boxer_right_id,
-            hist_rating_left = rating_left,
-            hist_rating_right = rating_right,
-            winner = 'left'
+            event_id=event_id,
+            fight_id=fight_id,
+            boxer_left_id=boxer_left_id,
+            boxer_right_id=boxer_right_id,
+            hist_rating_left=rating_left,
+            hist_rating_right=rating_right,
+            winner=result
         )
 
 
