@@ -34,18 +34,23 @@ class FightParser(BaseParser):
 
     def get_boxer_ids(self, tree):
         boxer_links = tree.xpath(
-            FightParser.BASE_DOM_PATH + '[1]//a[@class="personLink"]/@href'
+            FightParser.BASE_DOM_PATH + '//a[./img]/@href'
         )
 
         try:
             left = boxer_links[0].rsplit('/')[-1]
             right = boxer_links[1].rsplit('/')[-1]
         except IndexError:
-            raise FailedToParse("[-] Could not get boxers for fight")
+            raise FailedToParse("Could not get boxers for fight")
+
+        if left == '0' or right == '0':
+            raise FailedToParse(
+                'Fight is not complete, one of the boxers is TBA'
+            )
 
         return left, right
 
-    def clean_rating(self,raw):
+    def clean_rating(self, raw):
         return int(raw.rsplit('\n')[0].replace(',',''))
 
     def get_rating_before_fight(self, tree):
@@ -55,13 +60,11 @@ class FightParser(BaseParser):
         try:
             rating_left,rating_right = rating_row
         except ValueError:
-            raise FailedToParse("[-] Missing rating for fight")
-
+            raise FailedToParse("Missing rating for fight")
 
         return self.clean_rating(rating_left), self.clean_rating(rating_right)
 
-
-    def get_fight_outcome(self,tree):
+    def get_fight_outcome(self, tree):
         pass
 
     def parse(self, response):
@@ -70,14 +73,16 @@ class FightParser(BaseParser):
 
         event_id, fight_id = self.get_event_and_fight_id(response.url)
         boxer_left_id, boxer_right_id = self.get_boxer_ids(tree)
-        rating_left,rating_right = self.get_rating_before_fight(tree)
-        ##result = self.get_fight_outcome(tree)
+        rating_left, rating_right = self.get_rating_before_fight(tree)
+        # result = self.get_fight_outcome(tree)
 
         return Fight(
             event_id = event_id,
             fight_id = fight_id,
             boxer_left_id = boxer_left_id,
             boxer_right_id = boxer_right_id,
+            hist_rating_left = rating_left,
+            hist_rating_right = rating_right,
             winner = 'left'
         )
 
