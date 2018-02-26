@@ -74,14 +74,14 @@ class FightService(object):
         fight_id = url.rsplit('/')[-1]
         return self.find_by_id(event_id, fight_id)
 
-    def find_by_date(self, date, lazy_load=True):
+    def find_by_date(self, date, lazy_load=True, soft_fail=True):
         """
         Method to get all fights for a specific date.
         :param date: (str) Date in the format (yyyy-mm-dd)
         :param lazy_load: (bool, default=True) Whether to intialize relations lazily
         :return: (list) A list of Fight objects.
         """
-        fights_list = self.fight_dao.find_by_date(date)
+        fights_list = self.fight_dao.find_by_date(date, soft_fail=soft_fail)
 
         if lazy_load:
             fights_with_boxers = map(

@@ -1,5 +1,5 @@
 from . import BASE_URL
-
+from .parsers import FailedToParse
 
 class BaseDao(object):
     def __init__(self, session, parser):
@@ -25,7 +25,7 @@ class FightDao(BaseDao):
             self.session.get(url)
         )
 
-    def find_by_date(self, date):
+    def find_by_date(self, date, soft_fail=True):
         url = BASE_URL + FightDao.DATE_ENDPOINT
 
         response = self.session.get(
@@ -35,9 +35,17 @@ class FightDao(BaseDao):
 
         ids = self.fight_list_parser.parse(response)
 
-        fights = [
-            self.find_by_id(event_id, fight_id) for event_id, fight_id in ids
-        ]
+        fights = []
+        for event_id, fight_id in ids:
+            try:
+                fights.append(
+                    self.find_by_id(event_id, fight_id)
+                )
+            except FailedToParse as e:
+                if soft_fail:
+                    fights.append(e)
+                else:
+                    raise e
 
         return fights
 
