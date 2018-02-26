@@ -12,9 +12,9 @@ setup(
     author_email='floris.hoogenboom@futurefacts.nl',
     description='A wrapper around the Boxrec.com website to facilitate easy scraping.',
     install_requires = [
-        'requests',
-        'lxml',
-        'lazy-object-proxy'
+        'requests>=2.12',
+        'lxml>=3.7',
+        'lazy-object-proxy>=1.2'
     ],
     test_requires = [
         'nose'
