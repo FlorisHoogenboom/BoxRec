@@ -53,18 +53,20 @@ class FightParser(BaseParser):
         return left, right
 
     def clean_rating(self, raw):
+        if raw is None:
+            return None
+
         return int(raw.rsplit('\n')[0].replace(',',''))
 
     def get_rating_before_fight(self, tree):
         rating_row = tree.xpath(
-            FightParser.BASE_DOM_PATH + '[./td/b/text() = "before fight"]/td/text()'
+            FightParser.BASE_DOM_PATH + \
+                '[./td/b/text() = "before fight"]/td[position() = 1 or position() =3]'
         )
-        try:
-            rating_left,rating_right = rating_row
-        except ValueError:
-            raise FailedToParse("Missing rating for fight")
+        rating_left = self.clean_rating(rating_row[0].text)
+        rating_right = self.clean_rating(rating_row[1].text)
 
-        return self.clean_rating(rating_left), self.clean_rating(rating_right)
+        return rating_left, rating_right
 
     def get_fight_outcome(self, tree, left_id, right_id):
         outcome = tree.xpath(
@@ -86,7 +88,6 @@ class FightParser(BaseParser):
             return 'left'
         else:
             return 'right'
-
 
     def parse(self, response):
         tree = self.make_dom_tree(response)
