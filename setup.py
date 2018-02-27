@@ -7,9 +7,9 @@ setup(
         'boxrec'
     ],
     url='https://github.com/FutureFacts/boxrec',
-    license='WTFPL',
-    author='Floris Hoogenboom',
-    author_email='floris.hoogenboom@futurefacts.nl',
+    license='MIT',
+    author='Floris Hoogenboom, Tom Rijntjes',
+    author_email='floris.hoogenboom@futurefacts.nl, tom.rijntjes@futurefacts.nl',
     description='A wrapper around the Boxrec.com website to facilitate easy scraping.',
     install_requires = [
         'requests>=2.12',
