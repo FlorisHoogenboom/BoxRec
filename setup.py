@@ -15,8 +15,5 @@ setup(
         'requests>=2.12',
         'lxml>=3.7',
         'lazy-object-proxy>=1.2'
-    ],
-    test_requires = [
-        'nose'
     ]
 )
