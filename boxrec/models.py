@@ -11,6 +11,7 @@ class Fight(object):
         self, event_id, fight_id,
         boxer_left_id, boxer_right_id,
         hist_rating_left, hist_rating_right,
+        curr_rating_left, curr_rating_right,
         boxer_left=None, boxer_right=None,
         winner='left'
     ):
@@ -22,6 +23,8 @@ class Fight(object):
         self.boxer_left = boxer_left
         self.hist_rating_left = hist_rating_left
         self.hist_rating_right = hist_rating_right
+        self.curr_rating_left = curr_rating_left
+        self.curr_rating_right = curr_rating_right
         self.winner = winner
 
     @property

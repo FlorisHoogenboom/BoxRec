@@ -67,6 +67,17 @@ class FightParser(BaseParser):
         rating_right = self.clean_rating(rating_row[1].text)
 
         return rating_left, rating_right
+    
+    def get_rating_after_fight(self, tree):
+        """ New function to determine rating after fight."""
+        rating_row = tree.xpath(
+             FightParser.BASE_DOM_PATH + \
+                '[./td/b/text() = "after fight"]/td[position() = 1 or position() =3]'  
+        )
+        rating_left = self.clean_rating(rating_row[0].text)
+        rating_right = self.clean_rating(rating_row[1].text)
+
+        return rating_left, rating_right
 
     def get_fight_outcome(self, tree, left_id, right_id):
         outcome = tree.xpath(
@@ -94,7 +105,8 @@ class FightParser(BaseParser):
 
         event_id, fight_id = self.get_event_and_fight_id(response.url)
         boxer_left_id, boxer_right_id = self.get_boxer_ids(tree)
-        rating_left, rating_right = self.get_rating_before_fight(tree)
+        rating_before_left, rating_before_right = self.get_rating_before_fight(tree)
+        rating_after_left, rating_after_right = self.get_rating_after_fight(tree)
         result = self.get_fight_outcome(tree, boxer_left_id, boxer_right_id)
 
         return Fight(
@@ -102,8 +114,10 @@ class FightParser(BaseParser):
             fight_id=fight_id,
             boxer_left_id=boxer_left_id,
             boxer_right_id=boxer_right_id,
-            hist_rating_left=rating_left,
-            hist_rating_right=rating_right,
+            hist_rating_left=rating_before_left,
+            hist_rating_right=rating_before_right,
+            curr_rating_left=rating_after_left,
+            curr_rating_right=rating_after_right,
             winner=result
         )
 
