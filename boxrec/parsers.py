@@ -82,8 +82,8 @@ class FightParser(BaseParser):
     
     
     def get_age(self,tree):
-        """New function to retreive age of boxer.
-        @Author daniel.van.der.zee."""
+        """New function to retreive age of boxer. Returns None for
+        values that are not included on Boxrec.com"""
         age_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "age"]/td[position() = 1 or position() =3]'
@@ -94,67 +94,92 @@ class FightParser(BaseParser):
         return age_left, age_right
     
     def get_stance(self,tree):
-        """New function to retreive stance of boxer.
-        @Author daniel.van.der.zee."""
+        """New function to retreive stance of boxer. Returns None for
+        values that are not included on Boxrec.com"""
         stance_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "stance"]/td[position() = 1 or position() =3]'
         )
-        stance_left = stance_row[0].text.rstrip()
-        stance_right = stance_row[1].text.rstrip()
+        try:
+            stance_left = stance_row[0].text.rstrip()
+        except AttributeError as e:
+            stance_left = None
+        except:
+            raise FailedToParse('Stance of left boxer could not be determined.')
+        try:
+            stance_right = stance_row[1].text.rstrip()
+        except AttributeError as e:
+            stance_right = None
+        except:
+            raise FailedToParse('Stance of right boxer could not be determined.')
         
         return stance_left, stance_right
     
     def get_heigth_cm(self,tree):
-        """New function to retreive height of boxer in cm.
-        @Author daniel.van.der.zee."""
+        """New function to retreive height of boxer in cm. Returns None for
+        values that are not included on Boxrec.com"""
         height_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "height"]/td[position() = 1 or position() =3]'
         )
-        height_left = int(re.findall('\d+',height_row[0].text.split('/')[1].strip())[0])
-        height_right = int(re.findall('\d+',height_row[1].text.split('/')[1].strip())[0])
+        try:
+            height_left = int(re.findall('\d+',height_row[0].text.split('/')[1].strip())[0])
+        except AttributeError as e:
+            height_left = None
+        except:
+            raise FailedToParse('Height of left boxer could not be determined.')
+        try:
+            height_right = int(re.findall('\d+',height_row[1].text.split('/')[1].strip())[0])
+        except AttributeError as e:
+            height_right = None
+        except:
+            raise FailedToParse('Height of right boxer could not be determined.')
         
         return height_left, height_right
         
     def get_reach_cm(self,tree):
-        """New function to retreive reach of boxer in cm.
-        @Author daniel.van.der.zee."""
+        """New function to retreive reach of boxer in cm. Returns None for
+        values that are not included on Boxrec.com"""
         reach_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "reach"]/td[position() = 1 or position() =3]'
         )
-        reach_left = int(re.findall('\d+',reach_row[0].text.split('/')[1].strip())[0])
-        reach_right = int(re.findall('\d+',reach_row[1].text.split('/')[1].strip())[0])
+        try:
+            reach_left = int(re.findall('\d+',reach_row[0].text.split('/')[1].strip())[0])
+        except AttributeError as e:
+            reach_left = None
+        except:
+            raise FailedToParse('Reach of left boxer could not be determined.')
+        try:
+            reach_right = int(re.findall('\d+',reach_row[1].text.split('/')[1].strip())[0])
+        except AttributeError as e:
+            reach_right = None
+        except:
+            raise FailedToParse('Reach of right boxer could not be determined.')
         
         return reach_left, reach_right
     
     def get_record(self,tree):
         """New function to retreive record of boxer in cm.
-        Output is a tuple with (win,loss,draw) for each boxer.
-        @Author daniel.van.der.zee."""
+        Output is a tuple with (win,loss,draw) for each boxer."""
         win_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "won"]/td[position() = 1 or position() =3]'
         )
         win_left = self.clean_rating(win_row[0].text)
         win_right = self.clean_rating(win_row[1].text)
-        
         lose_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "lost"]/td[position() = 1 or position() =3]'
         )
         lose_left = self.clean_rating(lose_row[0].text)
         lose_right = self.clean_rating(lose_row[1].text)
-        
         drawn_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "drawn"]/td[position() = 1 or position() =3]'
         )
         drawn_left = self.clean_rating(drawn_row[0].text)
         drawn_right = self.clean_rating(drawn_row[1].text)
-        
-        
         
         return (win_left, lose_left, drawn_left), (win_right, lose_right, drawn_right)
 
