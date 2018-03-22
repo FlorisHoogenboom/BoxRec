@@ -53,7 +53,7 @@ class FightParser(BaseParser):
 
         return left, right
 
-    def clean_rating(self, raw):
+    def extract_alphanumeric(self, raw):
         if raw is None:
             return None
 
@@ -64,8 +64,8 @@ class FightParser(BaseParser):
             FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "before fight"]/td[position() = 1 or position() =3]'
         )
-        rating_left = self.clean_rating(rating_row[0].text)
-        rating_right = self.clean_rating(rating_row[1].text)
+        rating_left = self.extract_alphanumeric(rating_row[0].text)
+        rating_right = self.extract_alphanumeric(rating_row[1].text)
 
         return rating_left, rating_right
     
@@ -75,8 +75,8 @@ class FightParser(BaseParser):
              FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "after fight"]/td[position() = 1 or position() =3]'  
         )
-        rating_left = self.clean_rating(rating_row[0].text)
-        rating_right = self.clean_rating(rating_row[1].text)
+        rating_left = self.extract_alphanumeric(rating_row[0].text)
+        rating_right = self.extract_alphanumeric(rating_row[1].text)
 
         return rating_left, rating_right
     
@@ -88,8 +88,8 @@ class FightParser(BaseParser):
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "age"]/td[position() = 1 or position() = 3]'
         )
-        age_left = self.clean_rating(age_row[0].text)
-        age_right = self.clean_rating(age_row[1].text)
+        age_left = self.extract_alphanumeric(age_row[0].text)
+        age_right = self.extract_alphanumeric(age_row[1].text)
         
         return age_left, age_right
     
@@ -166,20 +166,20 @@ class FightParser(BaseParser):
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "won"]/td[position() = 1 or position() = 3]'
         )
-        win_left = self.clean_rating(win_row[0].text)
-        win_right = self.clean_rating(win_row[1].text)
+        win_left = self.extract_alphanumeric(win_row[0].text)
+        win_right = self.extract_alphanumeric(win_row[1].text)
         lose_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "lost"]/td[position() = 1 or position() = 3]'
         )
-        lose_left = self.clean_rating(lose_row[0].text)
-        lose_right = self.clean_rating(lose_row[1].text)
+        lose_left = self.extract_alphanumeric(lose_row[0].text)
+        lose_right = self.extract_alphanumeric(lose_row[1].text)
         drawn_row = tree.xpath(
                 FightParser.BASE_DOM_PATH + \
                 '[./td/b/text() = "drawn"]/td[position() = 1 or position() = 3]'
         )
-        drawn_left = self.clean_rating(drawn_row[0].text)
-        drawn_right = self.clean_rating(drawn_row[1].text)
+        drawn_left = self.extract_alphanumeric(drawn_row[0].text)
+        drawn_right = self.extract_alphanumeric(drawn_row[1].text)
         
         return (win_left, lose_left, drawn_left), (win_right, lose_right, drawn_right)
 
