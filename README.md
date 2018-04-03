@@ -39,3 +39,10 @@ session.post(
 fight_service = FightServiceFactory.make_service(session)
 ```
 One small exta note: I've noticed boxrec does not allow logging in on the first request. Hence, one should make a dummy request on the session before actually authenticating using the code above.
+
+# How to run tests
+First, make sure you have `nose` installed. To run the tests run the following command in the project's root
+```
+nosetests --verbose -w ./tests/
+```
+
