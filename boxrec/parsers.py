@@ -248,7 +248,7 @@ class FightListParser(BaseParser):
     def get_event_and_fight_ids(self, tree):
         links = tree.xpath(
             FightListParser.BASE_DOM_PATH \
-                + '//td[@class="actionCell"]/div[@class="mobileActions"]/a[1]/@href'
+                + '//td[@class="actionCell"]/div[@class="desktop"]/a[1]/@href'
         )
 
         events = map(lambda x: x.rsplit('/')[-2], links)
